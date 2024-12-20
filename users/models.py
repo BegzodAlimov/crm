@@ -66,6 +66,7 @@ class Teacher(BasedModel):
 
 class Parent(BasedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parents')
+    children = models.ManyToManyField('Student', related_name='children', null=True, blank=True)
     def __str__(self):
         return self.user.get_full_name
 
