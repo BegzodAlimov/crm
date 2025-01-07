@@ -35,6 +35,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         data['username'] = new_username
         data['password'] = new_password
 
+        print(data)
+
         return data
 
     def create(self, validated_data):
