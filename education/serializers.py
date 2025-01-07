@@ -1,20 +1,26 @@
 from rest_framework import serializers
 
-from education.models import Course
+from education.models import Course, Room, Subject, Level
 from tools.utility import validate_text
 
 
-class RoomSerializer(serializers.Serializer):
-    id = serializers.UUIDField(read_only=True)
-    room_number = serializers.IntegerField(min_value=1, max_value=9999)
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = "__all__"
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
-class SubjectSerializer(serializers.Serializer):
-    id = serializers.UUIDField(read_only=True)
-    subject_name = serializers.CharField(max_length=50, validators=[validate_text])
+class SubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = "__all__"
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
-class LevelSerializer(serializers.Serializer):
-    id = serializers.UUIDField(read_only=True)
-    level_name = serializers.CharField(max_length=50, validators=[validate_text])
+class LevelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Level
+        fields = "__all__"
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class CourseSerializer(serializers.ModelSerializer):
