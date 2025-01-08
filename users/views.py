@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
-
+from django.core.exceptions import ObjectDoesNotExist
 from tools.custom_pagination import CustomPagination
 from .serializers import UserCreateSerializer, UserSerializer, SingleUserSerializer, LoginSerializer, LogoutSerializer, \
     AccessTokenRefreshSerializer
@@ -10,6 +10,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.exceptions import NotFound
 
 from drf_yasg import openapi
 
@@ -62,27 +63,44 @@ class SingleUserAPIView(APIView):
             500: 'Internal Server Error - An unexpected error occurred'
         })
     def get(self, request, pk):
-        user = User.objects.get(pk=pk)
+        try:
+            user = User.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            raise NotFound({"message": "Not Found - User not found"})
+
         serializer = SingleUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @swagger_auto_schema(request_body=SingleUserSerializer)
+    @swagger_auto_schema(request_body=SingleUserSerializer,
+                         responses={
+            200: SingleUserSerializer,
+            404: 'Not Found - User not found',
+            500: 'Internal Server Error - An unexpected error occurred'
+        })
     def put(self, request, pk):
-        user = User.objects.get(pk=pk)
+        try:
+            user = User.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            raise NotFound({"message": "Not Found - User not found"})
+
         serializer = SingleUserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(
         responses={
-            200: 'No Content',
+            204: 'No Content',
             400: 'Bad Request - Invalid parameters were provided',
             500: 'Internal Server Error - An unexpected error occurred'
         })
     def delete(self, request, pk):
-        user = User.objects.get(pk=pk)
+        try:
+            user = User.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            raise NotFound({"message": "Not Found - User not found"})
+
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
