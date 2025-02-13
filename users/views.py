@@ -11,6 +11,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import AllowAny
 
 from drf_yasg import openapi
 
@@ -106,7 +107,7 @@ class SingleUserAPIView(APIView):
 
 
 class LoginAPIView(TokenObtainPairView):
-    # permission_classes = (AllowAny, )
+    permission_classes = (AllowAny, )
     serializer_class = LoginSerializer
 
 

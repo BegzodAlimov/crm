@@ -60,6 +60,7 @@ class SingleUserSerializer(serializers.ModelSerializer):
             'last_name': {'required': True, 'validators': [validate_text]},
             'phone_number': {'required': False, 'validators': [validate_text]},
             'gender': {'required': False},
+            "password": {"write_only": True},
         }
 
     def update(self, instance, validated_data):
@@ -101,7 +102,6 @@ class LoginSerializer(TokenObtainPairSerializer):
 class AccessTokenRefreshSerializer(TokenRefreshSerializer):
     def validate(self, data):
         data = super().validate(data)
-        print(data)
         access_token = data.get('access')
         if not access_token:
             raise serializers.ValidationError({"access_token": "This field is required."})
