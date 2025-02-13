@@ -12,9 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny
-
 from drf_yasg import openapi
-
 from users.models import User
 
 
@@ -54,6 +52,20 @@ class UserAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CurrentUserAPIView(APIView):
+    serializer_class = SingleUserSerializer
+    @swagger_auto_schema(
+        responses={
+            200: SingleUserSerializer,
+            404: 'Not Found - User not found',
+            500: 'Internal Server Error - An unexpected error occurred'
+        })
+    def get(self, request):
+        user = User.objects.get(id=request.user.id)
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SingleUserAPIView(APIView):

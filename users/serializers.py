@@ -95,8 +95,7 @@ class LoginSerializer(TokenObtainPairSerializer):
             raise ValidationError({'success': False, 'message': 'Invalid credentials'})
         self.user = user
         token = self.user.token()
-        user_serializer = SingleUserSerializer(self.user)
-        return {'success': True, 'token': token,'user': user_serializer.data}
+        return {'success': True, 'token': token}
 
 
 class AccessTokenRefreshSerializer(TokenRefreshSerializer):
