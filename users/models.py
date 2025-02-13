@@ -48,7 +48,6 @@ class User(BasedModel, AbstractUser):
         self.hashing_password()
         super(User, self).save(*args, **kwargs)
 
-
 class Admin(BasedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admins')
     def __str__(self):
