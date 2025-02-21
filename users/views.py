@@ -34,6 +34,9 @@ class UserAPIView(APIView):
             openapi.Parameter(
                 'full_name', openapi.IN_QUERY, description="Filter users by full name", type=openapi.TYPE_STRING
             ),
+            openapi.Parameter(
+                'gender', openapi.IN_QUERY, description="Filter users by gender", type=openapi.TYPE_STRING
+            ),
         ],
         responses={
             200: UserSerializer,
@@ -43,16 +46,20 @@ class UserAPIView(APIView):
     def get(self, request):
         users = User.objects.annotate(
             full_name=Concat(F('first_name'),Value(" "), F('last_name'))
-        ).only('full_name', 'phone_number', 'status')
+        ).only("id",'first_name','last_name','phone_number', 'status', 'gender').order_by('id')
 
         role = request.query_params.get('role', None)
         full_name = request.query_params.get('full_name', None)
+        gender = request.query_params.get('gender', None)
 
         if role:
             users = users.filter(role=role)
 
         if full_name:
             users = users.filter(full_name__icontains=full_name)
+
+        if gender:
+            users = users.filter(gender=gender)
 
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(users, request)
