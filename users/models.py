@@ -8,12 +8,17 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your models here.
 class User(BasedModel, AbstractUser):
-    STATUS_CHOICES = [
+    ROLE_CHOICES = [
         ('admin', 'Admin'),
         ('moderator', 'Moderator'),
         ('teacher', 'Teacher'),
         ('student', 'Student'),
         ("parent", "Parent"),
+    ]
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('inactive', 'Inactive'),
+        ('archive', 'Archive'),
     ]
     GENDER_CHOICES = [
         ('male', 'Male'),
@@ -24,7 +29,8 @@ class User(BasedModel, AbstractUser):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True, default='male')
     avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png')
     document = models.FileField(upload_to='documents/', null=True, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
     
     def __str__(self):
         return self.username
@@ -65,7 +71,7 @@ class Teacher(BasedModel):
 
 class Parent(BasedModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parents')
-    children = models.ManyToManyField('Student', related_name='children', null=True, blank=True)
+    children = models.ManyToManyField('Student', related_name='children', blank=True)
     def __str__(self):
         return self.user.get_full_name
 

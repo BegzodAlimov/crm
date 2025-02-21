@@ -33,7 +33,7 @@ class UserAPIView(APIView):
             500: 'Internal Server Error - An unexpected error occurred'
         })
     def get(self, request):
-        users = User.objects.only('username', 'email', 'status')
+        users = User.objects.only("first_name", "last_name", "phone_number",)
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(users, request)
 

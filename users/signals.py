@@ -17,13 +17,13 @@ def update_or_create_related_profile( instance, created, **kwargs):
     if not created:
         delete_existing_profiles(instance)
 
-    if instance.status == 'admin':
+    if instance.role == 'admin':
         Admin.objects.update_or_create(user=instance)
-    elif instance.status == 'moderator':
+    elif instance.role == 'moderator':
         Moderator.objects.update_or_create(user=instance)
-    elif instance.status == 'teacher':
+    elif instance.role == 'teacher':
         Teacher.objects.update_or_create(user=instance)
-    elif instance.status == 'student':
+    elif instance.role == 'student':
         Student.objects.update_or_create(user=instance)
-    elif instance.status == 'parent':
+    elif instance.role == 'parent':
         Parent.objects.update_or_create(user=instance)
