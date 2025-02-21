@@ -72,6 +72,7 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization'
         }
     },
+    'PERSIST_AUTH': True
 }
 
 ROOT_URLCONF = 'config.urls'

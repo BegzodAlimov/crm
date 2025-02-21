@@ -1,3 +1,5 @@
+from django.db.models.expressions import F, Value
+from django.db.models.functions.text import Concat
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -26,6 +28,12 @@ class UserAPIView(APIView):
             openapi.Parameter('page', openapi.IN_QUERY, description="Page number", type=openapi.TYPE_INTEGER),
             openapi.Parameter('page_size', openapi.IN_QUERY, description="Number of items per page",
                               type=openapi.TYPE_INTEGER),
+            openapi.Parameter(
+                'role', openapi.IN_QUERY, description="Filter users by role", type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'full_name', openapi.IN_QUERY, description="Filter users by full name", type=openapi.TYPE_STRING
+            ),
         ],
         responses={
             200: UserSerializer,
@@ -33,7 +41,19 @@ class UserAPIView(APIView):
             500: 'Internal Server Error - An unexpected error occurred'
         })
     def get(self, request):
-        users = User.objects.only("first_name", "last_name", "phone_number",)
+        users = User.objects.annotate(
+            full_name=Concat(F('first_name'),Value(" "), F('last_name'))
+        ).only('full_name', 'phone_number', 'status')
+
+        role = request.query_params.get('role', None)
+        full_name = request.query_params.get('full_name', None)
+
+        if role:
+            users = users.filter(role=role)
+
+        if full_name:
+            users = users.filter(full_name__icontains=full_name)
+
         paginator = self.pagination_class()
         page = paginator.paginate_queryset(users, request)
 
