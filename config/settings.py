@@ -68,8 +68,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = ["https://crmsystem-production.up.railway.app/"]
 
 SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
     'SECURITY_DEFINITIONS': {
-        'USE_SESSION_AUTH': False,
         'api_key': {
             'type': 'apiKey',
             'in': 'header',
