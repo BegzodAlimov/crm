@@ -46,7 +46,7 @@ class UserAPIView(APIView):
     def get(self, request):
         users = User.objects.annotate(
             full_name=Concat(F('first_name'), Value(" "), F('last_name'), Value(" "), F('middle_name'))
-        ).only("id",'first_name','last_name','phone_number', 'status', 'gender').order_by('id')
+        ).only("id",'first_name','last_name', 'middle_name','phone_number', 'status', 'gender').order_by('id')
 
         role = request.query_params.get('role', None)
         full_name = request.query_params.get('full_name', None)

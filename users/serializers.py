@@ -14,10 +14,11 @@ from rest_framework_simplejwt.tokens import AccessToken
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'gender', 'avatar', 'document', 'status')
+        fields = ('first_name', 'last_name', 'middle_name', 'email', 'phone_number', 'gender', 'avatar', 'document', 'status', 'role')
         extra_kwargs = {
             'first_name': {'required': True, 'validators': [validate_text]},
             'last_name': {'required': True, 'validators': [validate_text]},
+            'middle_name': {'required': False, 'validators': [validate_text]},
             'phone_number': {'required': False, 'validators': [validate_text]},
             'gender': {'required': False},
         }
@@ -34,9 +35,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
         new_password = f'{(data.get("first_name").lower())}-{data.get("last_name").lower()}'
         data['username'] = new_username
         data['password'] = new_password
-
-        print(data)
-
         return data
 
     def create(self, validated_data):
@@ -47,17 +45,18 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'username', 'email','phone_number', 'status']
+        fields = ['id', 'first_name', 'last_name', 'middle_name', 'email', 'phone_number', 'status']
 
 
 class SingleUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'first_name', 'last_name', 'gender', 'email', 'avatar', 'document', 'status', 'password']
+        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'gender', 'email', 'avatar', 'document', 'status', 'role', 'password']
         extra_kwargs = {
             'id': {'read_only': True},
             'first_name': {'required': True, 'validators': [validate_text]},
             'last_name': {'required': True, 'validators': [validate_text]},
+            'middle_name': {'required': False, 'validators': [validate_text]},
             'phone_number': {'required': False, 'validators': [validate_text]},
             'gender': {'required': False},
             "password": {"write_only": True},
