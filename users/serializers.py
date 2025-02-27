@@ -50,7 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
 class SingleUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'gender', 'email', 'avatar', 'status', 'role', 'password']
+        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'phone_number', 'gender', 'email', 'avatar', 'status', 'role', 'password']
         extra_kwargs = {
             'id': {'read_only': True},
             'first_name': {'required': True, 'validators': [validate_text]},
