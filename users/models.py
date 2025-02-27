@@ -27,7 +27,7 @@ class User(BasedModel, AbstractUser):
     email = models.EmailField(unique=True)
     middle_name = models.CharField(max_length=120, null=True, blank=True)
     role = models.CharField(max_length=120)
-    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    phone_number = models.CharField(max_length=30, null=True, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True, default='male')
     avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png', validators=[image_validator])
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
