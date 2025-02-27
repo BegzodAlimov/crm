@@ -3,18 +3,17 @@ from django.contrib.auth.models import update_last_login
 import random
 import uuid
 from tools.utility import validate_text
-from users.models import  User
+from users.models import User
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import AccessToken
 
-
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'middle_name', 'email', 'phone_number', 'gender', 'avatar', 'document', 'status', 'role')
+        fields = ('first_name', 'last_name', 'middle_name', 'email', 'phone_number', 'gender', 'avatar', 'status', 'role')
         extra_kwargs = {
             'first_name': {'required': True, 'validators': [validate_text]},
             'last_name': {'required': True, 'validators': [validate_text]},
@@ -51,7 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
 class SingleUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'gender', 'email', 'avatar', 'document', 'status', 'role', 'password']
+        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'gender', 'email', 'avatar', 'status', 'role', 'password']
         extra_kwargs = {
             'id': {'read_only': True},
             'first_name': {'required': True, 'validators': [validate_text]},
