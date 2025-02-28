@@ -1,8 +1,7 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-
-from education.models import Room, Subject, Level, Course
-from education.serializers import RoomSerializer, SubjectSerializer, LevelSerializer, CourseSerializer
 from tools.custom_pagination import CustomPagination
+from education.models import Room, Subject, Level, Group
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from education.serializers import RoomSerializer, SubjectSerializer, LevelSerializer, GroupSerializer
 
 class RoomsAPIView(ListCreateAPIView):
     queryset = Room.objects.all()
@@ -36,12 +35,12 @@ class LevelDetailAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = LevelSerializer
 
 
-class CourseAPIView(ListCreateAPIView):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+class GroupAPIView(ListCreateAPIView):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
     pagination_class = CustomPagination
 
 
-class CourseDetailAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+class GroupDetailAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer

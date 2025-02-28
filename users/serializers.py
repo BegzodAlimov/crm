@@ -1,14 +1,14 @@
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import update_last_login
-import random
 import uuid
-from tools.utility import validate_text
+import random
 from users.models import User
 from rest_framework import serializers
+from tools.utility import validate_text
+from django.contrib.auth import authenticate
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import AccessToken
+from django.contrib.auth.models import update_last_login
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,7 +18,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             'first_name': {'required': True, 'validators': [validate_text]},
             'last_name': {'required': True, 'validators': [validate_text]},
             'middle_name': {'required': False, 'validators': [validate_text]},
-            'phone_number': {'required': False, 'validators': [validate_text]},
+            'phone_number': {'required': True, 'validators': [validate_text]},
             'gender': {'required': False},
         }
 
@@ -44,21 +44,21 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'middle_name', 'email', 'phone_number', 'status']
-
+        fields = ['id', 'first_name', 'last_name', 'middle_name', 'phone_number', 'status']
 
 class SingleUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'phone_number', 'gender', 'email', 'avatar', 'status', 'role', 'password']
+        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'phone_number', 'gender', 'email', 'avatar', 'status', 'role']
         extra_kwargs = {
             'id': {'read_only': True},
-            'first_name': {'required': True, 'validators': [validate_text]},
-            'last_name': {'required': True, 'validators': [validate_text]},
-            'middle_name': {'required': False, 'validators': [validate_text]},
-            'phone_number': {'required': False, 'validators': [validate_text]},
             'gender': {'required': False},
-            "password": {"write_only": True},
+            'username': {'required': True, 'validators': [validate_text]},
+            'last_name': {'required': True, 'validators': [validate_text]},
+            "password": {"write_only": True, 'validators': [validate_text]},
+            'first_name': {'required': True, 'validators': [validate_text]},
+            'middle_name': {'required': False, 'validators': [validate_text]},
+            'phone_number': {'required': True, 'validators': [validate_text]},
         }
 
     def update(self, instance, validated_data):

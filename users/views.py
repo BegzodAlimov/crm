@@ -1,22 +1,21 @@
-from django.db.models.expressions import F, Value
-from django.db.models.functions.text import Concat
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.views import APIView
-from drf_yasg.utils import swagger_auto_schema
-from django.core.exceptions import ObjectDoesNotExist
-from tools.custom_pagination import CustomPagination
-from .serializers import UserCreateSerializer, UserSerializer, SingleUserSerializer, LoginSerializer, LogoutSerializer, \
-    AccessTokenRefreshSerializer
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework.exceptions import NotFound
-from rest_framework.permissions import AllowAny
 from drf_yasg import openapi
 from users.models import User
-
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.exceptions import NotFound
+from rest_framework.permissions import AllowAny
+from django.db.models.expressions import F, Value
+from django.db.models.functions.text import Concat
+from tools.custom_pagination import CustomPagination
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from .serializers import UserCreateSerializer, UserSerializer, SingleUserSerializer, LoginSerializer, LogoutSerializer, \
+    AccessTokenRefreshSerializer
 
 # Create your views here.
 class UserAPIView(APIView):
@@ -135,6 +134,7 @@ class SingleUserAPIView(APIView):
             400: 'Bad Request - Invalid parameters were provided',
             500: 'Internal Server Error - An unexpected error occurred'
         })
+
     def delete(self, request, pk):
         try:
             user = User.objects.get(pk=pk)

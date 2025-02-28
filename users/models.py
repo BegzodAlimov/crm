@@ -1,8 +1,8 @@
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import FileExtensionValidator
 from django.db import models
 from tools.models import BasedModel
+from django.contrib.auth.models import AbstractUser
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.validators import FileExtensionValidator
 
 image_validator = FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
 
@@ -24,11 +24,10 @@ class User(BasedModel, AbstractUser):
         ('male', 'Male'),
         ('female', 'Female'),
     ]
-    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=30)
+    email = models.EmailField(unique=False, null=True, blank=True)
     middle_name = models.CharField(max_length=120, null=True, blank=True)
-    role = models.CharField(max_length=120)
-    phone_number = models.CharField(max_length=30, null=True, blank=True)
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True, default='male')
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='male')
     avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png', validators=[image_validator])
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')

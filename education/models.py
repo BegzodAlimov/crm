@@ -1,7 +1,6 @@
 from django.db import models
-from django.db.models import CharField
-
 from tools.models import BasedModel
+from django.db.models import CharField
 from users.models import Student, Teacher
 
 
@@ -26,7 +25,7 @@ class Level(BasedModel):
         return self.level_name
 
 
-class Course(BasedModel):
+class Group(BasedModel):
     DAY_CHOICES = [
         ('every_day', 'Every day'),
         ('odd_day', 'Odd day'),
