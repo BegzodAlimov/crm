@@ -7,20 +7,17 @@ from tools.utility import validate_text
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = "__all__"
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = ["id", "room_number"]
 
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
-        fields = "__all__"
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = ["id", "subject_name", "teacher"]
 
 class LevelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Level
-        fields = "__all__"
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = ["id", "level_name"]
 
 
 class GroupSerializer(serializers.ModelSerializer):

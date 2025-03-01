@@ -65,9 +65,12 @@ class UserAPIView(APIView):
 
         if page is not None:
             serializer = UserSerializer(page, many=True)
+
             return paginator.get_paginated_response(serializer.data)
 
         serializer = UserSerializer(users, many=True)
+
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=UserCreateSerializer)

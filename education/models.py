@@ -13,6 +13,7 @@ class Room(BasedModel):
 
 class Subject(BasedModel):
     subject_name = models.CharField(max_length=50, unique=True)
+    teacher = models.ManyToManyField(Teacher, related_name='subjects')
 
     def __str__(self):
         return self.subject_name
@@ -31,7 +32,7 @@ class Group(BasedModel):
         ('odd_day', 'Odd day'),
         ('even_day', 'Even day')
     ]
-    course_name = models.CharField(max_length=50)
+    group_name = models.CharField(max_length=120)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='my_groups')
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='subject_groups')
     price = models.IntegerField()
@@ -44,4 +45,4 @@ class Group(BasedModel):
     end_time = models.TimeField()
 
     def __str__(self):
-        return f'{self.course_name} {self.level} - {self.teacher} {self.begin_time} - {self.end_time}'
+        return f'{self.group_name} {self.level} - {self.teacher} {self.begin_time} - {self.end_time}'

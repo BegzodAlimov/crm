@@ -1,6 +1,7 @@
 import uuid
 import random
-from users.models import User
+from education.serializers import GroupSerializer, SubjectSerializer
+from users.models import User, Teacher
 from rest_framework import serializers
 from tools.utility import validate_text
 from django.contrib.auth import authenticate
@@ -9,6 +10,15 @@ from rest_framework.generics import get_object_or_404
 from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth.models import update_last_login
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+
+
+class TeacherSerializer(serializers.ModelSerializer):
+    subjects = SubjectSerializer(many=True, read_only=True)
+    groups = GroupSerializer(many=True, read_only=True, source='my_groups')
+    class Meta:
+        model = Teacher
+        fields = ['groups', 'subjects']
+
 
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,10 +51,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserSerializer(serializers.ModelSerializer):
+    teacher = TeacherSerializer(read_only=True, required=False)
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'middle_name', 'phone_number', 'status']
+        fields = ['id', 'first_name', 'last_name', 'middle_name', 'phone_number', 'status', 'teacher']
+
 
 class SingleUserSerializer(serializers.ModelSerializer):
     class Meta:
