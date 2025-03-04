@@ -1,6 +1,9 @@
 from rest_framework.exceptions import ValidationError
 from datetime import datetime
 import re
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import AuthenticationFailed
+from users.models import User
 
 
 def validate_text(value):
@@ -13,6 +16,7 @@ def validate_text(value):
     if re.search(r'[<>%$]', value):
         raise ValidationError('Maxsus belgilar (<>%$) kiritishga yo‘l qo‘yilmaydi.')
 
+
 def validate_email(email):
     email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 
@@ -20,6 +24,7 @@ def validate_email(email):
         return True
     else:
         return False
+
 
 def check_verify_code(user, code):
     verifies = user.verify_codes.filter(expration_time__gte=datetime.now(), code=code, is_confirmed=False)
@@ -31,3 +36,14 @@ def check_verify_code(user, code):
     verifies.update(is_confirmed=True)
     return True
 
+
+class CustomJWTAuthentication(JWTAuthentication):
+    def get_user(self, validated_token):
+        try:
+            user_id = validated_token['user_id']
+            user = User.objects.get(id=user_id)
+            if not user.is_active:
+                raise AuthenticationFailed('Foydalanuvchi faol emas.')
+            return user
+        except User.DoesNotExist:
+            raise AuthenticationFailed('Foydalanuvchi topilmadi.')

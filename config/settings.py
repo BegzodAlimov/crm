@@ -103,6 +103,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'tools.utility.CustomJWTAuthentication', bu access token berilgan user mavjud yoki yo'qligini tekshiradi!
     ]
 }
 

@@ -1,6 +1,6 @@
 import uuid
 import random
-from education.serializers import GroupSerializer, SubjectSerializer
+from education.models import Subject, Group
 from users.models import User, Teacher
 from rest_framework import serializers
 from tools.utility import validate_text
@@ -12,12 +12,24 @@ from django.contrib.auth.models import update_last_login
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
 
+class TeacherGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ["id", "group_name"]
+
+
+class TeacherSubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ["id", "subject_name"]
+
+
 class TeacherSerializer(serializers.ModelSerializer):
-    subjects = SubjectSerializer(many=True, read_only=True)
-    groups = GroupSerializer(many=True, read_only=True, source='my_groups')
+    subjects = TeacherSubjectSerializer(many=True)
+    groups = TeacherGroupSerializer(many=True, source='my_groups')
     class Meta:
         model = Teacher
-        fields = ['groups', 'subjects']
+        fields = ['id', 'groups', 'subjects']
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -60,9 +72,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SingleUserSerializer(serializers.ModelSerializer):
+    teacher = TeacherSerializer(required=False, read_only=True)
     class Meta:
         model = User
-        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'phone_number', 'gender', 'email', 'avatar', 'status', 'role']
+        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'phone_number', 'gender', 'email', 'avatar', 'status', 'role', 'teacher']
         extra_kwargs = {
             'id': {'read_only': True},
             'gender': {'required': False},

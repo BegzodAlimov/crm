@@ -131,6 +131,31 @@ class SingleUserAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
+    @swagger_auto_schema(request_body=SingleUserSerializer,
+                         responses={
+            200: SingleUserSerializer,
+            404: 'Not Found - User not found',
+            500: 'Internal Server Error - An unexpected error occurred'
+        })
+    def patch(self, request, pk, *args, **kwargs):
+        try:
+            user = User.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            raise NotFound({"message": "Not Found - User not found"})
+
+        # So'rov ma'lumotlarini tekshirish uchun (debug uchun)
+        print("Request data:", request.data)
+
+        serializer = SingleUserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            updated_user = serializer.save()
+            # Teacher bog'lanishlarini tekshirish uchun (debug uchun)
+            if hasattr(updated_user, 'teacher'):
+                print("Teacher subjects:", updated_user.teacher.subjects.all())
+                print("Teacher groups:", updated_user.teacher.my_groups.all())
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     @swagger_auto_schema(
         responses={
             204: 'No Content',
