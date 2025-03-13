@@ -1,12 +1,15 @@
 from tools.custom_pagination import CustomPagination
 from education.models import Room, Subject, Level, Group
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from education.serializers import RoomSerializer, SubjectSerializer, LevelSerializer, GroupSerializer
+from education.serializers import RoomSerializer, SubjectSerializer, LevelSerializer, GroupSerializer, \
+    GroupCreateSerializer
+
 
 class RoomsAPIView(ListCreateAPIView):
-    queryset = Room.objects.all()
+    queryset = Room.objects.all().order_by('id')
     serializer_class = RoomSerializer
     pagination_class = CustomPagination
+
 
 class RoomDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Room.objects.all()
@@ -14,7 +17,7 @@ class RoomDetailAPIView(RetrieveUpdateDestroyAPIView):
 
 
 class SubjectsAPIView(ListCreateAPIView):
-    queryset = Subject.objects.all()
+    queryset = Subject.objects.all().order_by('id')
     serializer_class = SubjectSerializer
     pagination_class = CustomPagination
 
@@ -25,7 +28,7 @@ class SubjectDetailAPIView(RetrieveUpdateDestroyAPIView):
 
 
 class LevelsAPIView(ListCreateAPIView):
-    queryset = Level.objects.all()
+    queryset = Level.objects.all().order_by('id')
     serializer_class = LevelSerializer
     pagination_class = CustomPagination
 
@@ -36,9 +39,15 @@ class LevelDetailAPIView(RetrieveUpdateDestroyAPIView):
 
 
 class GroupAPIView(ListCreateAPIView):
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+    queryset = Group.objects.all().order_by('id')
     pagination_class = CustomPagination
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return GroupSerializer  # GET uchun
+        elif self.request.method == 'POST':
+            return GroupCreateSerializer  # POST uchun
+        return super().get_serializer_class()
 
 
 class GroupDetailAPIView(RetrieveUpdateDestroyAPIView):

@@ -1,7 +1,8 @@
 import uuid
 import random
+
 from education.models import Subject, Group
-from users.models import User, Teacher
+from users.models import User
 from rest_framework import serializers
 from tools.utility import validate_text
 from django.contrib.auth import authenticate
@@ -12,24 +13,16 @@ from django.contrib.auth.models import update_last_login
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 
 
-class TeacherGroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Group
-        fields = ["id", "group_name"]
-
-
-class TeacherSubjectSerializer(serializers.ModelSerializer):
+class UserSubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ["id", "subject_name"]
 
 
-class TeacherSerializer(serializers.ModelSerializer):
-    subjects = TeacherSubjectSerializer(many=True)
-    groups = TeacherGroupSerializer(many=True, source='my_groups')
+class UserGroupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Teacher
-        fields = ['id', 'groups', 'subjects']
+        model = Group
+        fields = ["id", "group_name"]
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -65,17 +58,21 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    teacher = TeacherSerializer(read_only=True, required=False)
+    teacher_groups = UserGroupSerializer(source="my_groups", many=True, read_only=True)
+    teacher_subjects = UserSubjectSerializer(source="my_subjects", many=True, read_only=True)
+    student_groups = UserGroupSerializer(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'middle_name', 'phone_number', 'status', 'teacher']
+        fields = ['id', 'first_name', 'last_name', 'middle_name', 'phone_number', 'status', 'teacher_groups', 'teacher_subjects', 'student_groups']
 
 
 class SingleUserSerializer(serializers.ModelSerializer):
-    teacher = TeacherSerializer(required=False, read_only=True)
+    teacher_groups = UserGroupSerializer(source="my_groups", many=True, read_only=True)
+    teacher_subjects = UserSubjectSerializer(source="my_subjects", many=True, read_only=True)
+    student_groups = UserGroupSerializer(many=True, read_only=True)
     class Meta:
         model = User
-        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'phone_number', 'gender', 'email', 'avatar', 'status', 'role', 'teacher']
+        fields = ['id','username', 'first_name', 'last_name', 'middle_name', 'phone_number', 'gender', 'email', 'avatar', 'status', 'role', "teacher_groups", 'teacher_subjects', "student_groups"]
         extra_kwargs = {
             'id': {'read_only': True},
             'gender': {'required': False},

@@ -17,6 +17,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .serializers import UserCreateSerializer, UserSerializer, SingleUserSerializer, LoginSerializer, LogoutSerializer, \
     AccessTokenRefreshSerializer
 
+
 # Create your views here.
 class UserAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
@@ -143,16 +144,9 @@ class SingleUserAPIView(APIView):
         except ObjectDoesNotExist:
             raise NotFound({"message": "Not Found - User not found"})
 
-        # So'rov ma'lumotlarini tekshirish uchun (debug uchun)
-        print("Request data:", request.data)
-
         serializer = SingleUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
-            updated_user = serializer.save()
-            # Teacher bog'lanishlarini tekshirish uchun (debug uchun)
-            if hasattr(updated_user, 'teacher'):
-                print("Teacher subjects:", updated_user.teacher.subjects.all())
-                print("Teacher groups:", updated_user.teacher.my_groups.all())
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

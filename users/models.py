@@ -6,7 +6,6 @@ from django.core.validators import FileExtensionValidator
 
 image_validator = FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])
 
-
 # Create your models here.
 class User(BasedModel, AbstractUser):
     ROLE_CHOICES = [
@@ -54,34 +53,3 @@ class User(BasedModel, AbstractUser):
     def save(self, *args, **kwargs):
         self.hashing_password()
         super(User, self).save(*args, **kwargs)
-
-
-class Admin(BasedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin')
-    def __str__(self):
-        return self.user.get_full_name
-
-
-class Moderator(BasedModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='moderator')
-    def __str__(self):
-        return self.user.get_full_name
-
-
-class Teacher(BasedModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher')
-    def __str__(self):
-        return self.user.get_full_name
-
-
-class Parent(BasedModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parent')
-    children = models.ManyToManyField('Student', related_name='children', blank=True)
-    def __str__(self):
-        return self.user.get_full_name
-
-
-class Student(BasedModel):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student')
-    def __str__(self):
-        return self.user.get_full_name
